@@ -23,7 +23,7 @@ public class OrderPage extends JFrame {
 	private Menu menu;
 
 	private JPanel containerPanel = new JPanel();
-	// private JPanel mainPanel = new JPanel();
+	private JPanel mainPanel = new JPanel();
 	// private JPanel menuPanel = new JPanel();
 	private JPanel receiptPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
@@ -35,7 +35,8 @@ public class OrderPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setContentPane(containerPanel);
 		setLayout(new BorderLayout());
-		add(getMainPanel(), BorderLayout.CENTER);
+		add(mainPanel, BorderLayout.CENTER);
+		mainPanel = getMainPanel();
 		add(header, BorderLayout.NORTH);
 		header.setFont(new Font("Arial", Font.BOLD, 16));
 		header.setHorizontalAlignment(JLabel.CENTER);
@@ -67,7 +68,6 @@ public class OrderPage extends JFrame {
 	}
 
 	public JPanel getMainPanel() {
-		JPanel mainPanel = new JPanel();
 
 		mainPanel.setLayout(new GridLayout(1, 3));
 
