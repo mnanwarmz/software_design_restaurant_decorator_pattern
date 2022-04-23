@@ -3,6 +3,7 @@ package assignment1;
 import java.util.ArrayList;
 
 import assignment1.Items.*;
+import assignment1.Decorators.Condiment.*;
 import assignment1.Decorators.Topping.*;
 import assignment1.Items.Beverages.*;
 import assignment1.Items.MainMeals.*;
@@ -19,6 +20,7 @@ public class Menu {
 		meals.add(new Mozarella(new Cheese(new Burger())));
 		meals.add(new Mozarella(new Pizza()));
 		beverages.add(new Espresso());
+		beverages.add(new Mocha(new Espresso()));
 		sideDishes.add(new Fries());
 	}
 

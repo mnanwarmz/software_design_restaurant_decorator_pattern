@@ -5,6 +5,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import assignment1.Interfaces.Item;
 import java.awt.Dimension;
@@ -25,7 +26,7 @@ public class OrderPage extends JFrame {
 	// private JPanel mainPanel = new JPanel();
 	// private JPanel menuPanel = new JPanel();
 	private JPanel receiptPanel = new JPanel();
-	// private JPanel orderPanel = new JPanel();
+	private JPanel rightPanel = new JPanel();
 	private Order order = new Order();
 
 	public OrderPage(Menu menu) {
@@ -42,11 +43,27 @@ public class OrderPage extends JFrame {
 		footer.setFont(new Font("Arial", Font.BOLD, 16));
 		footer.setHorizontalAlignment(JLabel.CENTER);
 		// add(getMenuPanel(), BorderLayout.WEST);
-		receiptPanel = getReceiptPanel();
-		add(receiptPanel, BorderLayout.EAST);
+		add(rightPanel, BorderLayout.EAST);
+		rightPanel.setLayout(new BorderLayout());
+		rightPanel.add(receiptPanel, BorderLayout.CENTER);
 
-		// add(getOrderPanel(), BorderLayout.SOUTH);
-		// Add panels to main panel
+		receiptPanel = getReceiptPanel();
+
+		// Add borders to panels
+		rightPanel.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLACK));
+
+	}
+
+	private JFrame showPaymentSuccessfulScreen() {
+		JFrame frame = new JFrame("Payment Successful");
+		frame.setSize(400, 200);
+		frame.setVisible(true);
+		frame.setLayout(new BorderLayout());
+		JLabel label = new JLabel("Payment Successful");
+		label.setFont(new Font("Arial", Font.BOLD, 16));
+		label.setHorizontalAlignment(JLabel.CENTER);
+		frame.add(label, BorderLayout.CENTER);
+		return frame;
 	}
 
 	public JPanel getMainPanel() {
@@ -73,10 +90,9 @@ public class OrderPage extends JFrame {
 		for (Item food : menu.getMeals()) {
 			String formattedPrice = String.format("%.2f", food.getPrice());
 			String foodName = food.getDescription();
-			int quantity = order.getQuantityOfItem(food);
-			System.out.println(quantity);
 			JLabel foodLabel = new JLabel(foodName + " - RM" + formattedPrice);
 			JButton foodBtn = new JButton("Add To Cart");
+			// if Food already exists disable buttons
 			foodBtn.setPreferredSize(new Dimension(200, 50));
 			foodBtn.setBackground(new Color(22, 160, 133));
 			foodButtonsPanel.add(foodLabel);
@@ -86,7 +102,7 @@ public class OrderPage extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						order.addItem(food);
-						refreshComponent(receiptPanel);
+						refreshComponent(rightPanel);
 					} catch (Exception ex) {
 						System.out.println(ex.getMessage());
 					}
@@ -118,6 +134,8 @@ public class OrderPage extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
+						order.addItem(beverage);
+						refreshComponent(rightPanel);
 					} catch (Exception ex) {
 						System.out.println(ex.getMessage());
 					}
@@ -149,6 +167,8 @@ public class OrderPage extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
+						order.addItem(sideDish);
+						refreshComponent(rightPanel);
 					} catch (Exception ex) {
 						System.out.println(ex.getMessage());
 					}
@@ -171,17 +191,36 @@ public class OrderPage extends JFrame {
 			JLabel itemLabel = new JLabel(order.itemToString(item));
 			receiptPanel.add(itemLabel);
 		}
-		JLabel totalLabel = new JLabel("Total: RM" + String.format("%.2f", order.getTotalPrice()));
 		// insert panel gap
-		receiptPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-		receiptPanel.add(totalLabel);
+
+		JLabel totalLabel = new JLabel("Total: RM" + String.format("%.2f", order.getTotalPrice()));
+		totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		// Make a Payment Button
+		JButton makePaymentBtn = new JButton("Make Payment");
+		makePaymentBtn.setPreferredSize(new Dimension(200, 50));
+		makePaymentBtn.setBackground(new Color(22, 160, 133));
+		// onclick show payment successful
+		makePaymentBtn.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(null,
+						"Payment of RM " + new String().format("%.2f", order.getTotalPrice())
+								+ " has been successfully made and order has been added into the queue!");
+				refreshComponent(rightPanel);
+			}
+		});
+		JPanel paymentPanel = new JPanel();
+		paymentPanel.setLayout(new BoxLayout(paymentPanel, BoxLayout.X_AXIS));
+		paymentPanel.add(makePaymentBtn);
+		paymentPanel.add(totalLabel);
+		rightPanel.add(paymentPanel, BorderLayout.SOUTH);
 
 		return receiptPanel;
 	}
 
 	public void refreshComponent(JPanel panel) {
 		panel.removeAll();
-		panel.add(getReceiptPanel());
+		panel.add(getReceiptPanel(), BorderLayout.CENTER);
 		panel.revalidate();
 		panel.repaint();
 	}
