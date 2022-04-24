@@ -3,6 +3,7 @@ package assignment1;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -14,6 +15,7 @@ import java.awt.GridLayout;
 import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class OrderPage extends JFrame {
@@ -28,6 +30,8 @@ public class OrderPage extends JFrame {
 	private JPanel receiptPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
 	private Order order = new Order();
+	private int tableNo = 1;
+	private ArrayList<Table> tables = new ArrayList<Table>();
 
 	public OrderPage(Menu menu) {
 		// Panels for menu, receipt and order
@@ -53,24 +57,24 @@ public class OrderPage extends JFrame {
 		// Add borders to panels
 		rightPanel.setBorder(javax.swing.BorderFactory.createLineBorder(Color.BLACK));
 
-	}
-
-	private JFrame showPaymentSuccessfulScreen() {
-		JFrame frame = new JFrame("Payment Successful");
-		frame.setSize(400, 200);
-		frame.setVisible(true);
-		frame.setLayout(new BorderLayout());
-		JLabel label = new JLabel("Payment Successful");
-		label.setFont(new Font("Arial", Font.BOLD, 16));
-		label.setHorizontalAlignment(JLabel.CENTER);
-		frame.add(label, BorderLayout.CENTER);
-		return frame;
+		// add button to return to previous frame
+		JButton backButton = new JButton("<");
+		backButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+				createFrame(new Main(tables));
+			}
+		});
+		add(backButton, BorderLayout.LINE_START);
+		backButton.setPreferredSize(new Dimension(20, 20));
+		backButton.setBackground(new Color(22, 160, 133));
+		backButton.setForeground(Color.WHITE);
+		backButton.setFont(new Font("Arial", Font.BOLD, 16));
 	}
 
 	public JPanel getMainPanel() {
 
 		mainPanel.setLayout(new GridLayout(1, 3));
-
 		mainPanel.add(getFoodsPanel());
 		mainPanel.add(getBeveragesPanel());
 		mainPanel.add(getSideDishPanel());
@@ -203,14 +207,35 @@ public class OrderPage extends JFrame {
 		makePaymentBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Table table = new Table(tableNo);
+				table.addOrder(order);
+				tables.add(table);
+				dispose();
+				createFrame(new Main(tables));
 				JOptionPane.showMessageDialog(null,
 						"Payment of RM " + new String().format("%.2f", order.getTotalPrice())
-								+ " has been successfully made and order has been added into the queue!");
+								+ " has been successfully made. Table No: " + tableNo);
 				refreshComponent(rightPanel);
 			}
 		});
 		JPanel paymentPanel = new JPanel();
-		paymentPanel.setLayout(new BoxLayout(paymentPanel, BoxLayout.X_AXIS));
+		paymentPanel.setLayout(new BoxLayout(paymentPanel, BoxLayout.Y_AXIS));
+		// add Table No. dropdown Section
+		JLabel tableNoLabel = new JLabel("Table No. ");
+		tableNoLabel.setFont(new Font("Verdana", Font.BOLD, 16));
+		JComboBox<Integer> tableNoDropdown = new JComboBox<Integer>();
+		for (int i = 1; i <= 10; i++) {
+			tableNoDropdown.addItem(i);
+		}
+		tableNoDropdown.setPreferredSize(new Dimension(100, 50));
+		tableNoDropdown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tableNo = (int) tableNoDropdown.getSelectedItem();
+			}
+		});
+		paymentPanel.add(tableNoLabel);
+		paymentPanel.add(tableNoDropdown);
 		paymentPanel.add(makePaymentBtn);
 		paymentPanel.add(totalLabel);
 		rightPanel.add(paymentPanel, BorderLayout.SOUTH);
@@ -223,5 +248,11 @@ public class OrderPage extends JFrame {
 		panel.add(getReceiptPanel(), BorderLayout.CENTER);
 		panel.revalidate();
 		panel.repaint();
+	}
+
+	private void createFrame(JFrame obj) {
+		this.dispose();
+		obj.setSize(800, 600);
+		obj.setVisible(true);
 	}
 }

@@ -1,9 +1,8 @@
 package assignment1;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import assignment1.Interfaces.Item;
@@ -65,11 +64,6 @@ public class Order {
 	public ArrayList<ItemDisplay> getItemDisplays() {
 		return itemDisplays;
 	}
-
-	// public String itemToString(Item item) {
-	// String formattedPrice = String.format("%.2f", item.getPrice());
-	// return item.getDescription() + ": " + formattedPrice;
-	// }
 }
 
 class ItemDisplay {
@@ -103,4 +97,5 @@ class ItemDisplay {
 		String formattedPrice = String.format("%.2f", price);
 		return description + ": " + formattedPrice + " x " + quantity;
 	}
+
 }
