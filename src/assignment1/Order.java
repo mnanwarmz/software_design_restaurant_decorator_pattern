@@ -4,13 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JOptionPane;
+
 import assignment1.Interfaces.Item;
+import assignment1.Items.MainMeal;
 
 public class Order {
 	private ArrayList<Item> items = new ArrayList<Item>();
+	private ArrayList<ItemDisplay> itemDisplays = new ArrayList<ItemDisplay>();
 
 	public void addItem(Item item) {
+		// if Item of instance mainmeal already exists alert user
+		if (item instanceof MainMeal) {
+			for (Item i : items) {
+				if (i instanceof MainMeal) {
+					JOptionPane.showMessageDialog(null, "Main Meal already exists");
+					return;
+				}
+			}
+		}
+		for (ItemDisplay itemDisplay : itemDisplays) {
+			if (itemDisplay.getDescription().equals(item.getDescription())) {
+				itemDisplay.setQuantity(itemDisplay.getQuantity() + 1);
+				return;
+			}
+		}
+		ItemDisplay itemDisplay = new ItemDisplay(item.getDescription(), 1, item.getPrice());
 		items.add(item);
+		itemDisplays.add(itemDisplay);
 	}
 
 	public int getQuantityOfItem(Item item) {
@@ -35,14 +56,51 @@ public class Order {
 
 	public double getTotalPrice() {
 		double totalPrice = 0;
-		for (Item item : items) {
-			totalPrice += item.getPrice();
+		for (ItemDisplay item : itemDisplays) {
+			totalPrice += item.getPrice() * item.getQuantity();
 		}
 		return totalPrice;
 	}
 
-	public String itemToString(Item item) {
-		String formattedPrice = String.format("%.2f", item.getPrice());
-		return item.getDescription() + ": " + formattedPrice;
+	public ArrayList<ItemDisplay> getItemDisplays() {
+		return itemDisplays;
+	}
+
+	// public String itemToString(Item item) {
+	// String formattedPrice = String.format("%.2f", item.getPrice());
+	// return item.getDescription() + ": " + formattedPrice;
+	// }
+}
+
+class ItemDisplay {
+	private String description;
+	private int quantity;
+	private double price;
+
+	public ItemDisplay(String description, int quantity, double price) {
+		this.description = description;
+		this.quantity = quantity;
+		this.price = price;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public double getPrice() {
+		return price;
+	}
+
+	public String toString() {
+		String formattedPrice = String.format("%.2f", price);
+		return description + ": " + formattedPrice + " x " + quantity;
 	}
 }

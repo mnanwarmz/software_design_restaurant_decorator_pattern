@@ -187,8 +187,8 @@ public class OrderPage extends JFrame {
 		JLabel receiptLabel = new JLabel("Receipt");
 		receiptLabel.setFont(new Font("Verdana", Font.BOLD, 20));
 		receiptPanel.add(receiptLabel);
-		for (Item item : order.getItems()) {
-			JLabel itemLabel = new JLabel(order.itemToString(item));
+		for (ItemDisplay item : order.getItemDisplays()) {
+			JLabel itemLabel = new JLabel(item.toString());
 			receiptPanel.add(itemLabel);
 		}
 		// insert panel gap
